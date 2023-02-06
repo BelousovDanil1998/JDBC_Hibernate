@@ -8,20 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
+   private Connection connection = Util.getConnection();
+
     public UserDaoJDBCImpl() {
 
     }
-    Connection connection = Util.getConnection();
+
     public void createUsersTable() {
-        String createSqlTable = "create table if not exists table_name" +
-                "(\n" +
-                "    id       int auto_increment," +
-                "    name     VARCHAR(255) null," +
-                "    lastName varchar(255) null," +
-                "    age      int          null," +
-                "    constraint table_name_pk" +
-                "        primary key (id)" +
-                ");";
+        String createSqlTable = "CREATE TABLE IF NOT EXISTS table_name (\n id int auto_increment, name VARCHAR(255) null, lastName VARCHAR(255) null, age int null, CONSTRAINT table_name_pk PRIMARY KEY (id));";
 
         try (Statement statement = connection.createStatement()) {
             statement.execute(createSqlTable);
@@ -34,7 +28,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void dropUsersTable() {
-        String dropSqlTable = "drop table if exists table_name";
+        String dropSqlTable = "DROP TABLE IF EXISTS table_name";
         try (Statement statement = connection.createStatement()) {
             statement.execute(dropSqlTable);
 
@@ -44,12 +38,12 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        String addUser = "INSERT INTO table_name" + "  (name, lastName, age) VALUES " + " (?, ?, ?);";
+        String addUser = "INSERT INTO table_name  (name, lastName, age) VALUES (?, ?, ?);";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(addUser)) {
-            preparedStatement.setString(1,name);
-            preparedStatement.setString(2,lastName);
-            preparedStatement.setByte(3,age);
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.setByte(3, age);
             preparedStatement.executeUpdate();
             System.out.println("User с именем – " + name + " добавлен в базу данных");
 
@@ -59,7 +53,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void removeUserById(long id) {
-        String removeUser = "delete from table_name where id = " + id;
+        String removeUser = "DELETE FROM table_name WHERE id = " + id;
         try (Statement statement = Util.getConnection().createStatement()) {
             statement.execute(removeUser);
 
